@@ -38,4 +38,4 @@ class PostRepositoryImpl @Inject constructor(
                 Result.failure(e)
             }
         }
-}
+    }

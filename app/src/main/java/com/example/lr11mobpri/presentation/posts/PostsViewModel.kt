@@ -23,8 +23,15 @@ class PostsViewModel @Inject constructor(
     @EveningGreeting private val eveningGreeting: GreetingService
 ) : ViewModel() {
 
+    init {
+        android.util.Log.d("GreetingTest", morningGreeting.getGreeting())
+        android.util.Log.d("GreetingTest", eveningGreeting.getGreeting())
+    }
+
     private val _uiState = MutableStateFlow(PostsUiState())
     val uiState: StateFlow<PostsUiState> = _uiState.asStateFlow()
+    val morningGreetingText = morningGreeting.getGreeting()
+    val eveningGreetingText = eveningGreeting.getGreeting()
 
     fun loadPosts(page: Int = 1, limit: Int = 20) {
         viewModelScope.launch {
