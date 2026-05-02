@@ -30,8 +30,6 @@ class PostsViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(PostsUiState())
     val uiState: StateFlow<PostsUiState> = _uiState.asStateFlow()
-    val morningGreetingText = morningGreeting.getGreeting()
-    val eveningGreetingText = eveningGreeting.getGreeting()
 
     fun loadPosts(page: Int = 1, limit: Int = 20) {
         viewModelScope.launch {
@@ -47,7 +45,6 @@ class PostsViewModel @Inject constructor(
     }
 
     fun addPost(title: String, body: String) {
-        // бизнес-логика (может быть перенесена в UseCase)
         if (title.isBlank()) return
         val newPost = com.example.lr11mobpri.domain.model.Post(
             id = 0, userId = 1, title = title, body = body

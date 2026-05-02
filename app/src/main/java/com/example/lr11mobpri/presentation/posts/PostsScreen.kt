@@ -10,8 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.lr11mobpri.di.MorningGreeting
-import com.example.lr11mobpri.di.EveningGreeting
 
 @Composable
 fun PostsScreen(
@@ -23,10 +21,10 @@ fun PostsScreen(
         viewModel.loadPosts()
     }
 
-    // Обработка ошибок – можно показать Snackbar, но для простоты – текст
+
     if (uiState.error != null) {
         LaunchedEffect(uiState.error) {
-            // Здесь можно показать Snackbar, но для лабораторной достаточно текста
+
         }
     }
 
