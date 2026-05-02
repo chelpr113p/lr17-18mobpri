@@ -4,13 +4,17 @@ import com.example.lr11mobpri.data.remote.api.PostApi
 import com.example.lr11mobpri.data.remote.mapper.toDomain
 import com.example.lr11mobpri.data.remote.mapper.toDto
 import com.example.lr11mobpri.domain.model.Post
+import com.example.lr11mobpri.di.IoDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import com.example.lr11mobpri.domain.repository.PostRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import javax.inject.Inject
 
-class PostRepositoryImpl(
-    private val api: PostApi
+class PostRepositoryImpl @Inject constructor(
+    private val api: PostApi,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : PostRepository {
 
     override suspend fun getPosts(page: Int, limit: Int): Result<List<Post>> =

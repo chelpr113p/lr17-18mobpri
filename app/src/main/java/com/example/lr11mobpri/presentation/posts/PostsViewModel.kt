@@ -2,18 +2,25 @@ package com.example.lr11mobpri.presentation.posts
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.lr11mobpri.domain.model.Post
 import com.example.lr11mobpri.domain.usecase.AddPostUseCase
 import com.example.lr11mobpri.domain.usecase.GetPostsUseCase
+import com.example.lr11mobpri.domain.service.GreetingService
+import com.example.lr11mobpri.di.MorningGreeting
+import com.example.lr11mobpri.di.EveningGreeting
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class PostsViewModel(
+@HiltViewModel
+class PostsViewModel @Inject constructor(
     private val getPostsUseCase: GetPostsUseCase,
-    private val addPostUseCase: AddPostUseCase
+    private val addPostUseCase: AddPostUseCase,
+    @MorningGreeting private val morningGreeting: GreetingService,
+    @EveningGreeting private val eveningGreeting: GreetingService
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PostsUiState())
@@ -24,24 +31,25 @@ class PostsViewModel(
             _uiState.update { it.copy(isLoading = true, error = null) }
             getPostsUseCase(page, limit)
                 .onSuccess { posts ->
-                    _uiState.update { it.copy(posts = posts, isLoading = false, error = null) }
+                    _uiState.update { it.copy(posts = posts, isLoading = false) }
                 }
                 .onFailure { e ->
-                    _uiState.update { it.copy(isLoading = false, error = e.message ?: "Ошибка загрузки") }
+                    _uiState.update { it.copy(isLoading = false, error = e.message) }
                 }
         }
     }
 
     fun addPost(title: String, body: String) {
+        // бизнес-логика (может быть перенесена в UseCase)
         if (title.isBlank()) return
-        val newPost = Post(id = 0, userId = 1, title = title, body = body) // id=0 – сервер назначит
+        val newPost = com.example.lr11mobpri.domain.model.Post(
+            id = 0, userId = 1, title = title, body = body
+        )
         viewModelScope.launch {
             addPostUseCase(newPost)
-                .onSuccess {
-                    loadPosts() // перезагружаем список
-                }
+                .onSuccess { loadPosts() }
                 .onFailure { e ->
-                    _uiState.update { it.copy(error = e.message ?: "Ошибка добавления") }
+                    _uiState.update { it.copy(error = e.message) }
                 }
         }
     }
